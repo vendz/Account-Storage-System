@@ -165,16 +165,15 @@ class entity_display:
         self.deleteButton.destroy()
 
     def show(self):
-        global counter
-        if counter % 2 == 0:
-            self.showButton['text'] = "hide"
-            self.password_display_label.grid_forget()
-            self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
-        else:
+
+        if self.showButton['text'] == "hide":
             self.showButton['text'] = "show"
             self.password_text_label.grid_forget()
             self.password_display_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
-        counter += 1
+        else:
+            self.showButton['text'] = "hide"
+            self.password_display_label.grid_forget()
+            self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
 
 # --------------------------------------- FUNCTIONS ---------------------------------------
 
@@ -190,11 +189,6 @@ def onadd():
     password_entry.delete(0, 'end')
     messagebox.showinfo('Added Entity', 'Successfully Added, \n' + 'Username: ' + username + '\nEmail: ' + email)
     readfile()
-
-
-def clearFile():
-    file = open('app_manager.txt', "w")
-    file.close()
 
 
 def readfile():
