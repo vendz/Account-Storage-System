@@ -1,6 +1,13 @@
 # Password Storage System
 ### Show some :heart: and :star: the repo to support the project
 
+[![GitHub stars](https://img.shields.io/github/stars/vendz/Password-Storage-System?style=social)](https://github.com/vendz/Password-Storage-System)
+[![Twitter Follow](https://img.shields.io/twitter/follow/vandit_vasa?label=Follow%20%40vandit_vasa&style=social)](https://twitter.com/vandit_vasa)
+[![GitHub followers](https://img.shields.io/github/followers/vendz?label=Follow&style=social)](https://github.com/vendz)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) 
+![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)
+
+#### password storage system written in Python using Tkinter
 ---
 
 ### **Features**:
@@ -11,6 +18,21 @@
 - **Hash and Salt account information**
 - **everything is saved locally**
 
+---
+#### Installation:
+
+Clone this repository using
+```sh
+$ git clone https://github.com/vendz/Password-Storage-System.git
+```
+Enter the directory and install all the requirements using
+```sh
+$ pip3 install -r requirements.txt
+```
+Run the app using
+```sh
+$ python3 main.py
+```
 ---
 
 ### **Usage**:
