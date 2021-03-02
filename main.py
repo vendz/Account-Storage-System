@@ -12,7 +12,8 @@ root = tk.Tk()
 root.title("Password Storage System")
 root.withdraw()  # to hide the root window and ask for master password
 objects = []
-
+global counter
+counter = 0
 # ---------------------------------- ENCRYPTION ALGORITHM ---------------------------------
 access = 'vendz'
 password = access.encode()  # convert to type bytes
@@ -119,8 +120,10 @@ class entity_display:
 
         self.username_display_label = Label(self.root, text=original_username, font=("Courier", 14))
         self.email_display_label = Label(self.root, text=original_email, font=("Courier", 14))
-        self.password_display_label = Label(self.root, text=label_password, font=("Courier", 14))   # this will show password in '*'
-        self.password_text_label = Label(self.root, text=original_password, font=("Courier", 14))   # this will show password in 'clear text'
+        self.password_display_label = Label(self.root, text=label_password,
+                                            font=("Courier", 14))  # this will show password in '*'
+        self.password_text_label = Label(self.root, text=original_password,
+                                         font=("Courier", 14))  # this will show password in 'clear text'
         self.showButton = Button(self.root, text="show", fg='red', command=self.show)
         self.deleteButton = Button(self.root, text='delete', fg='red', command=self.delete)
 
@@ -132,11 +135,12 @@ class entity_display:
         self.deleteButton.grid(row=6 + self.count, column=4, sticky=E)
 
     def delete(self):
+        row = self.deleteButton.grid_info()['row']
         ask = messagebox.askquestion("Are You Sure", "are you sure you want to delete this?")
 
         if ask == "yes":
-            for i in objects:
-                i.destroy()
+
+            objects[int(row - 6)].destroy()
 
             file = open("app_manager.txt", "r")
             lines = file.readlines()
@@ -161,9 +165,16 @@ class entity_display:
         self.deleteButton.destroy()
 
     def show(self):
-        self.password_display_label.grid_forget()
-        self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
-        self.showButton['text'] = "hide"
+        global counter
+        if counter % 2 == 0:
+            self.showButton['text'] = "hide"
+            self.password_display_label.grid_forget()
+            self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
+        else:
+            self.showButton['text'] = "show"
+            self.password_text_label.grid_forget()
+            self.password_display_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
+        counter += 1
 
 # --------------------------------------- FUNCTIONS ---------------------------------------
 
