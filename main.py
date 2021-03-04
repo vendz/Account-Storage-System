@@ -12,6 +12,7 @@ root = tk.Tk()
 root.title("Password Storage System")
 root.withdraw()  # to hide the root window and ask for master password
 objects = []
+lines_list = []
 global counter
 counter = 0
 # ---------------------------------- ENCRYPTION ALGORITHM ---------------------------------
@@ -135,32 +136,31 @@ class entity_display:
         self.deleteButton.grid(row=6 + self.count, column=4, sticky=E)
 
     def delete(self):
-        row = self.deleteButton.grid_info()['row']
+
         ask = messagebox.askquestion("Are You Sure", "are you sure you want to delete this?")
+        row = self.deleteButton.grid_info()['row']
 
         if ask == "yes":
 
-            objects[int(row - 6)].destroy()
-
-            file = open("app_manager.txt", "r")
+            file = open('app_manager.txt', 'r')
             lines = file.readlines()
             file.close()
 
-            file = open("app_manager.txt", "w")
-            count = 0
+            del lines[row - 6]
 
+            file = open("app_manager.txt", "w+")
             for line in lines:
-                if count != self.count:
-                    file.write(line)
-                    count += 1
+                file.write(line)
 
             file.close()
+            self.destroy()
             readfile()
 
     def destroy(self):
         self.username_display_label.destroy()
         self.email_display_label.destroy()
         self.password_display_label.destroy()
+        self.password_text_label.destroy()
         self.showButton.destroy()
         self.deleteButton.destroy()
 
@@ -174,6 +174,7 @@ class entity_display:
             self.showButton['text'] = "hide"
             self.password_display_label.grid_forget()
             self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
+
 
 # --------------------------------------- FUNCTIONS ---------------------------------------
 
