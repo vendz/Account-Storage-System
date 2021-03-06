@@ -7,16 +7,15 @@ import base64
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import time
 
 root = tk.Tk()
 root.title("Password Storage System")
-root.withdraw()  # to hide the root window and ask for master password
 objects = []
-lines_list = []
-global counter
-counter = 0
+
 # ---------------------------------- ENCRYPTION ALGORITHM ---------------------------------
-access = 'vendz'
+
+access = 'vendz'    # master-password
 password = access.encode()  # convert to type bytes
 salt = b'w\x8a\x0b\x93f}\xd7u\xecD/3\xda\x1e\x05\xbd'
 kdf = PBKDF2HMAC(
@@ -29,7 +28,6 @@ kdf = PBKDF2HMAC(
 key = base64.urlsafe_b64encode(kdf.derive(password))  # can only use KDF(key derivation function) once
 f = Fernet(key)
 
-
 # ---------------------------------------- CLASSES ----------------------------------------
 
 
@@ -38,14 +36,17 @@ class popupWindow(object):
     attempts = 0
 
     def __init__(self, master):
+        root.withdraw()  # to hide the root window and ask for master password
+
         window = self.window = Toplevel(master)
-        window.title('Input Password')
+        window.title('Enter Password')
         window.geometry('{}x{}'.format(250, 100))
         window.resizable(width=False, height=False)
         self.label = Label(window, text=" Password: ", font=('Courier', 14), justify=CENTER)
         self.label.pack()
         self.entry = Entry(window, show='*', width=30)
         self.entry.pack(pady=7)
+        self.entry.focus()
         self.button = Button(window, text='Submit', command=self.authenticate, font=('Courier', 14))
         self.button.pack()
 
@@ -117,7 +118,7 @@ class entity_display:
         original_password = decrypt_password.decode()  # converting byte array to string
 
         len_original_password = len(original_password)
-        label_password = "*" * len_original_password
+        label_password = "*" * len_original_password    # this will show password in '*'
 
         self.username_display_label = Label(self.root, text=original_username, font=("Courier", 14))
         self.email_display_label = Label(self.root, text=original_email, font=("Courier", 14))
@@ -137,23 +138,25 @@ class entity_display:
 
     def delete(self):
 
+        row = self.deleteButton.grid_info()['row']  # this will get the row you want to delete
         ask = messagebox.askquestion("Are You Sure", "are you sure you want to delete this?")
-        row = self.deleteButton.grid_info()['row']
 
         if ask == "yes":
+
+            for i in objects:
+                i.destroy()
 
             file = open('app_manager.txt', 'r')
             lines = file.readlines()
             file.close()
 
-            del lines[row - 6]
+            del lines[row - 6]  # this will delete the data-entry from 'app_manager.txt'
 
-            file = open("app_manager.txt", "w+")
+            file = open("app_manager.txt", "w")
             for line in lines:
                 file.write(line)
 
             file.close()
-            self.destroy()
             readfile()
 
     def destroy(self):
@@ -171,6 +174,7 @@ class entity_display:
             self.password_text_label.grid_forget()
             self.password_display_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
         else:
+            popupWindow(root)   # this will ask for master-password if you want to see the password (Another Layer of security)
             self.showButton['text'] = "hide"
             self.password_display_label.grid_forget()
             self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
@@ -180,15 +184,18 @@ class entity_display:
 
 
 def onadd():
-    email = email_entry.get()
-    username = username_entry.get()
-    password = password_entry.get()
+    email_raw = email_entry.get()
+    email = email_raw.replace(" ", "")    # this will delete all whitespaces from email
+    username_raw = username_entry.get()
+    username = username_raw.replace(" ", "")    # this will delete all whitespaces from username
+    password_raw = password_entry.get()
+    password = password_raw.replace(" ", "")    # this will delete all whitespaces from password
     entries = entity_add(root, email, username, password)
     entries.write()
     email_entry.delete(0, 'end')
     username_entry.delete(0, 'end')
     password_entry.delete(0, 'end')
-    messagebox.showinfo('Added Entity', 'Successfully Added, \n' + 'Username: ' + username + '\nEmail: ' + email)
+    messagebox.showinfo('Added Entity', 'Successfully Added: \n' + 'Username: ' + username + '\nEmail: ' + email)
     readfile()
 
 
