@@ -145,6 +145,8 @@ class entity_display:
         ask = messagebox.askquestion("Are You Sure", "are you sure you want to delete this?")
 
         if ask == "yes":
+            for i in objects:   # TODO: cannot delete more than one entry after logging in.
+                i.destroy()
 
             file = open('app_manager.txt', 'r')
             lines = file.readlines()
