@@ -15,9 +15,9 @@
 - **add usernames and passwords**
 - **delete a particular entry**
 - **show/hide passwords**
-- **Hash and Salt account information**
-- **everything is saved locally**
-
+- **You will asked to Enter master-password to view saved info even though you are logged in**
+---
+###### NOTE: Everything is hashed and stored locally in a file `app_manager.txt`
 ---
 #### Installation:
 
