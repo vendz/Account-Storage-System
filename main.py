@@ -176,7 +176,7 @@ class entity_display:
             self.password_text_label.grid_forget()
             self.password_display_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
         else:
-            # this will ask you for password every 5 minutes of pressing 'show' button
+            # this will ask you for password every 5 minutes of pressing 'show' button (Extra Layer of Security)
             if lastAsked is None or relativedelta(datetime.now(), lastAsked).minutes >= minutes:
                 lastAsked = datetime.now()
                 popupWindow(root)
