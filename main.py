@@ -7,11 +7,14 @@ import base64
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-import time
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 root = tk.Tk()
 root.title("Password Storage System")
 objects = []
+lastAsked = None
+minutes = 5
 
 # ---------------------------------- ENCRYPTION ALGORITHM ---------------------------------
 
@@ -143,9 +146,6 @@ class entity_display:
 
         if ask == "yes":
 
-            for i in objects:
-                i.destroy()
-
             file = open('app_manager.txt', 'r')
             lines = file.readlines()
             file.close()
@@ -169,15 +169,24 @@ class entity_display:
 
     def show(self):
 
+        global lastAsked
+
         if self.showButton['text'] == "hide":
             self.showButton['text'] = "show"
             self.password_text_label.grid_forget()
             self.password_display_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
         else:
-            popupWindow(root)   # this will ask for master-password if you want to see the password (Another Layer of security)
-            self.showButton['text'] = "hide"
-            self.password_display_label.grid_forget()
-            self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
+            # this will ask you for password every 5 minutes of pressing 'show' button
+            if lastAsked is None or relativedelta(datetime.now(), lastAsked).minutes >= minutes:
+                lastAsked = datetime.now()
+                popupWindow(root)
+                self.showButton['text'] = "hide"
+                self.password_display_label.grid_forget()
+                self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
+            else:
+                self.showButton['text'] = "hide"
+                self.password_display_label.grid_forget()
+                self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
 
 
 # --------------------------------------- FUNCTIONS ---------------------------------------
