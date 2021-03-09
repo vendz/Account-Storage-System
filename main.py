@@ -15,7 +15,7 @@ root.title("Password Storage System")
 objects = []
 lastAsked = None
 minutes = 5
-
+check_btn_var = tk.IntVar()
 # ---------------------------------- ENCRYPTION ALGORITHM ---------------------------------
 
 access = 'vendz'    # master-password
@@ -130,14 +130,16 @@ class entity_display:
         self.password_text_label = Label(self.root, text=original_password,
                                          font=("Courier", 14))  # this will show password in 'clear text'
         self.showButton = Button(self.root, text="show", fg='red', command=self.show)
+        self.editButton = Button(self.root, text="edit", fg='red', command=self.edit)
         self.deleteButton = Button(self.root, text='delete', fg='red', command=self.delete)
 
     def display(self):
-        self.username_display_label.grid(row=6 + self.count, sticky=W, padx=5)
+        self.username_display_label.grid(row=6 + self.count, padx=5)
         self.email_display_label.grid(row=6 + self.count, column=1, padx=5)
-        self.password_display_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
-        self.showButton.grid(row=6 + self.count, column=3, sticky=E)
-        self.deleteButton.grid(row=6 + self.count, column=4, sticky=E)
+        self.password_display_label.grid(row=6 + self.count, column=2, padx=5)
+        self.showButton.grid(row=6 + self.count, column=3)
+        self.editButton.grid(row=6 + self.count, column=4)
+        self.deleteButton.grid(row=6 + self.count, column=5)
 
     def delete(self):
 
@@ -167,6 +169,7 @@ class entity_display:
         self.password_display_label.destroy()
         self.password_text_label.destroy()
         self.showButton.destroy()
+        self.editButton.destroy()
         self.deleteButton.destroy()
 
     def show(self):
@@ -176,7 +179,7 @@ class entity_display:
         if self.showButton['text'] == "hide":
             self.showButton['text'] = "show"
             self.password_text_label.grid_forget()
-            self.password_display_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
+            self.password_display_label.grid(row=6 + self.count, column=2, padx=5)
         else:
             # this will ask you for password every 5 minutes of pressing 'show' button (Extra Layer of Security)
             if lastAsked is None or relativedelta(datetime.now(), lastAsked).minutes >= minutes:
@@ -184,11 +187,47 @@ class entity_display:
                 popupWindow(root)
                 self.showButton['text'] = "hide"
                 self.password_display_label.grid_forget()
-                self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
+                self.password_text_label.grid(row=6 + self.count, column=2, padx=5)
             else:
                 self.showButton['text'] = "hide"
                 self.password_display_label.grid_forget()
-                self.password_text_label.grid(row=6 + self.count, column=2, sticky=E, padx=5)
+                self.password_text_label.grid(row=6 + self.count, column=2, padx=5)
+
+    def edt_delete(self):
+
+        row = self.editButton.grid_info()['row']  # this will get the row you want to edit
+
+        for i in objects:
+            i.destroy()
+
+        file = open('app_manager.txt', 'r')
+        lines = file.readlines()
+        file.close()
+
+        del lines[row - 6]  # this will delete the data-entry from 'app_manager.txt'
+
+        file = open("app_manager.txt", "w")
+        for line in lines:
+            file.write(line)
+
+        file.close()
+        readfile()
+
+    def edit(self):
+        edt_username = self.username_display_label.cget("text")
+        edt_email = self.email_display_label.cget("text")
+        edt_password = self.password_text_label.cget("text")
+
+        self.edt_delete()
+
+        username_entry.delete(0, END)
+        username_entry.insert(0, edt_username)
+
+        email_entry.delete(0, END)
+        email_entry.insert(0, edt_email)
+
+        password_entry.delete(0, END)
+        password_entry.insert(0, edt_password)
 
 
 # --------------------------------------- FUNCTIONS ---------------------------------------
@@ -223,17 +262,24 @@ def readfile():
     file.close()
 
 
+def check_btn():
+    if check_btn_var.get() == 1:
+        password_entry['show'] = ""
+    else:
+        password_entry['show'] = "*"
+
+
 # ---------------------------------------- GRAPHICS ---------------------------------------
 
 master = popupWindow(root)  # this will first ask for password and then display main window
 
 title = Label(root, text="Add Entity", font=("Courier", 18))
 title.grid(columnspan=3, row=0)
-username_label = Label(root, text="Username: ", font=("Courier", 14))
+username_label = Label(root, text="Website: ", font=("Courier", 14))
 username_label.grid(row=1, sticky=E, padx=3)
 username_entry = Entry(root, font=("Courier", 14))
 username_entry.grid(columnspan=3, row=1, column=1, padx=2, pady=2, sticky=W)
-email_label = Label(root, text="Email: ", font=("Courier", 14))
+email_label = Label(root, text="Email/Username: ", font=("Courier", 14))
 email_label.grid(row=2, sticky=E, padx=3)
 email_entry = Entry(root, font=("courier", 14))
 email_entry.grid(row=2, column=1, columnspan=3, padx=2, pady=2, sticky=W)
@@ -241,12 +287,14 @@ password_label = Label(root, text="Password: ", font=("Courier", 14))
 password_label.grid(row=3, sticky=E, padx=3)
 password_entry = Entry(root, font=("Courier", 14), show="*")
 password_entry.grid(row=3, column=1, columnspan=3, padx=2, pady=2, sticky=W)
+password_checkbutton = Checkbutton(root, text="show password", variable=check_btn_var, onvalue=1, offvalue=0, command=check_btn)
+password_checkbutton.grid(row=3, column=2, padx=38, pady=2, sticky=W)
 add_btn = Button(root, text="Add", font=("Courier", 14), command=onadd)
 add_btn.grid(row=4, columnspan=3)
 
-name_label2 = Label(root, text='Name: ', font=('Courier', 14))
+name_label2 = Label(root, text='Website: ', font=('Courier', 14))
 name_label2.grid(row=5)
-email_label2 = Label(root, text='Email: ', font=('Courier', 14))
+email_label2 = Label(root, text='Email/Username: ', font=('Courier', 14))
 email_label2.grid(row=5, column=1)
 pass_label2 = Label(root, text='Password: ', font=('Courier', 14))
 pass_label2.grid(row=5, column=2)
