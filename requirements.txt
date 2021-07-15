@@ -1,4 +1,4 @@
 future~=0.18.2
 tkmacosx~=1.0.3
 cryptography~=3.4.7
-python-dateutil~=2.8.1
+python-dateutil~=2.8.2
